@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bw.dao.MyDao">
+  <select id="login" resultType="User">
+  select *from user where name=#{name} and pwd=#{pwd}
+  </select>
+  
+  <select id="list" resultType="Food">
+  
+  SELECT f.*,GROUP_CONCAT(pei.pname) pname from food f LEFT JOIN cp on f.fid=cp.fid LEFT JOIN
+ pei on pei.pid=cp.pid 
+ <where>
+ 
+  <if test="fname!=null and fname!=''">
+    and f.fname like '%${fname}%'
+  
+  </if>
+ 
+ </where>
+  GROUP BY f.fid
+  </select>
+   <select id="peilist" resultType="Pei">
+   
+   select *from pei
+   
+   </select>
+
+</mapper>
