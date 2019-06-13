@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans  xmlns="http://www.springframework.org/schema/beans"  
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+xmlns:aop="http://www.springframework.org/schema/aop"   
+xmlns:context="http://www.springframework.org/schema/context"  
+xmlns:jee="http://www.springframework.org/schema/jee"  
+xmlns:lang="http://www.springframework.org/schema/lang"  
+xmlns:util="http://www.springframework.org/schema/util"  
+xmlns:tx="http://www.springframework.org/schema/tx"  
+xmlns:mvc="http://www.springframework.org/schema/mvc"   
+
+xsi:schemaLocation="http://www.springframework.org/schema/beans  
+ http://www.springframework.org/schema/beans/spring-beans.xsd  http://www.springframework.org/schema/aop    
+ http://www.springframework.org/schema/aop/spring-aop.xsd   
+ http://www.springframework.org/schema/jee    
+ http://www.springframework.org/schema/jee/spring-jee.xsd   
+ http://www.springframework.org/schema/lang    
+ http://www.springframework.org/schema/lang/spring-lang.xsd   
+ http://www.springframework.org/schema/context    
+ http://www.springframework.org/schema/context/spring-context.xsd   
+ http://www.springframework.org/schema/tx    
+ http://www.springframework.org/schema/tx/spring-tx.xsd   
+ http://www.springframework.org/schema/util    
+ http://www.springframework.org/schema/util/spring-util.xsd   
+ http://www.springframework.org/schema/mvc    
+ http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<!-- 配置sping第一步 -->
+	<!-- 
+		**************************************************************
+		扫描的包  
+	 -->
+ 	<context:component-scan base-package="com.bw"></context:component-scan>
+ 	
+ 	<!-- 数据库的链接 -->
+ 	<bean id="dateSource" class="org.apache.commons.dbcp.BasicDataSource">
+ 		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+ 		<property name="url" value="jdbc:mysql:///1702cssh"></property>
+ 		<property name="username" value="root"></property>
+ 		<property name="password" value="root"></property>
+ 	</bean>
+ 	
+ 	<!-- SqlSessionFactory -->
+ 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+ 		<property name="dataSource" ref="dateSource"></property>
+ 		<!-- 
+ 			*******************************************************
+ 			持久层的xml 扫描的路径
+ 		 -->
+ 		<property name="mapperLocations" value="classpath:com/bw/dao/*.xml"></property>
+ 		<!--
+ 			************************************************************
+ 		 别名   也就是说 需要  bean包的全限定名称 -->
+ 		<property name="typeAliasesPackage" value="com.bw.entity"></property>
+ 		<!-- spingMVC  spring  Mybatis  分页使用pageHelper所以需要在此处配置pageHelper的标签 -->
+ 		<property name="plugins">
+		    <array>
+		      <bean class="com.github.pagehelper.PageInterceptor">
+		        <property name="properties">
+		          <!--使用下面的方式配置参数，一行配置一个 -->
+		          <value>
+		            helperDialect=mysql
+		            reasonable=true
+		          </value>
+		        </property>
+		      </bean>
+		    </array>
+		  </property>
+ 	</bean>
+ 	<!-- 把mybaits 的配置文件  加到了  Spring的配置文件中 所以 加载映射文件的工作也需要在此xml 中完成 -->
+ 	<bean id="mapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+ 		<!-- **********************DAO层中 包名 *************************** -->
+ 		<property name="basePackage" value="com.bw.dao"></property>
+ 	</bean>
+ 	<!-- 处理事务 -->
+ 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+ 		<property name="dataSource" ref="dateSource"></property>
+ 	</bean>
+ 	
+ 	<!-- 配置AOP -->
+ 	<aop:config >
+ 		<!-- ************************此处需要修改 路径 ****************************
+ 		  execution(* com.bw.service.*.*(..))  service包下的所有类
+ 		 -->
+ 		<aop:pointcut expression="execution(* com.bw.service.*.*(..))" id="mypc"/>
+ 		<aop:advisor advice-ref="myAdvice" pointcut-ref="mypc"/>
+ 	</aop:config>
+ 	<tx:advice transaction-manager="transactionManager" id="myAdvice">
+ 		<tx:attributes>
+ 			<tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+ 			<tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+ 			<tx:method name="del*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+ 			<tx:method name="upd*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+ 			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Exception" />
+ 			<tx:method name="*" read-only="true" />
+ 		</tx:attributes>
+ 	</tx:advice>
+ 	
+ 	
+ </beans>

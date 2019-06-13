@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bw.dao.MyDao">
+ <select id="list" resultType="Move">
+ select *from move
+ <where>
+   <if test="yname!=null and yname!=''">
+     and yname like '%${yname}%'
+   </if>
+ 
+   <if test="daoy!=null and daoy!=''">
+     and daoy like '%${daoy}%'
+   </if>
+ 
+   <if test="nd!=null and nd!=''">
+     and nd =#{nd}
+   </if>
+   <if test="pricest!=null and pricest!=''">
+     and price >=${pricest}
+   </if>
+ 
+   <if test="priceend!=null and priceend!=''">
+     and price &lt;=${priceend}
+   </if>
+ 
+   <if test="datest!=null and datest!=''">
+     and date >=#{datest}
+   </if>
+ 
+   <if test="dateend!=null and dateend!=''">
+     and date &lt;=#{dateend}
+   </if>
+ 
+   <if test="timest!=null and timest!=''">
+     and time >=${timest}
+   </if>
+ 
+   <if test="timeend!=null and timeend!=''">
+     and time &lt;=${timeend}
+   </if>
+ 
+ 
+ </where>
+ 
+ </select>
+
+<update id="updxia">
+update move set zt=1 where yid=${yid}
+
+
+</update>
+<update id="updshang">
+update move set zt=0 where yid=${yid}
+
+
+</update>
+
+ <delete id="delete">
+ delete from move where yid in (${yids})
+ 
+ </delete>
+
+
+
+</mapper>
