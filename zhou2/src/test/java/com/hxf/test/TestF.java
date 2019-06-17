@@ -42,7 +42,7 @@ public class TestF {
 
   @Test
   public void TestNull() {
-    String string = "";
+    String string = "   ";
     boolean b = Stringut.hasText(string);
     if (b) {
       System.out.println("无值");

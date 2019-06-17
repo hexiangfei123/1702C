@@ -15,7 +15,7 @@ public class Stringut {
 
   //方法2：判断源字符串是否有值，空引号(空白字符串)和空格也算没值
   public static boolean hasText(String src) {
-    if (src != null && src.trim() != "") {
+    if (src != null && src.trim().length() < 0) {
       return false;
     } else {
       return true;
